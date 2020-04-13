@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@android:color/white"
+        app:cardCornerRadius="15dp"
+        app:cardElevation="4dp"
+        app:contentPadding="16dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraint_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/product_image"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <TextView
+                android:id="@+id/product_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="@string/Name"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="18sp"
+                app:layout_constraintStart_toEndOf="@+id/product_image"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/product_price"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="@string/price"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="@+id/product_name"
+                app:layout_constraintTop_toTopOf="@+id/textView5" />
+
+            <TextView
+                android:id="@+id/product_qty"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="@string/qty"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="@+id/product_price"
+                app:layout_constraintTop_toTopOf="@+id/qty_text" />
+
+            <TextView
+                android:id="@+id/name_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:fontFamily="@font/poppins"
+                android:text="@string/placeholder"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/product_name"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/poppins"
+                android:text="@string/placeholder"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="@+id/name_text"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/name_text"
+                app:layout_constraintTop_toBottomOf="@+id/name_text" />
+
+            <TextView
+                android:id="@+id/qty_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/poppins"
+                android:text="@string/placeholder"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="@+id/textView5"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/textView5"
+                app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+            <Button
+                android:id="@+id/sale_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@color/colorPrimaryDark"
+                android:fontFamily="@font/poppins"
+                android:text="@string/sale"
+                android:textAlignment="center"
+                android:textColor="@color/colorAccent"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/qty_text" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</FrameLayout>

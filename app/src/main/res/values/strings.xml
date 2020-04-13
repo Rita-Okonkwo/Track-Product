@@ -3,4 +3,21 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="List">List of Products</string>
+    <string name="Name">Name:</string>
+    <string name="price">Price:</string>
+    <string name="qty">Qty:</string>
+    <string name="placeholder">a text to determine if you rock</string>
+    <string name="sale">sell</string>
+    <string name="product_details">Product Details</string>
+    <string name="name_of_product">Enter name of product</string>
+    <string name="price_of_product">Enter price of product (value only)</string>
+    <string name="plus">+</string>
+    <string name="default_qty">0</string>
+    <string name="sub">-</string>
+    <string name="supplier">Enter email or phone number of supplier</string>
+    <string name="order">order product</string>
+    <string name="upload">upload image</string>
+    <string name="delete">Delete Product</string>
+    <string name="save">save</string>
 </resources>
