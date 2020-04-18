@@ -12,10 +12,11 @@
         tools:layout="@layout/fragment_product_list">
         <action
             android:id="@+id/action_productListFragment_to_productDetailFragment"
-            app:destination="@id/delete" />
+            app:destination="@id/productDetail"
+            app:popUpTo="@+id/productListFragment" />
     </fragment>
     <fragment
-        android:id="@+id/delete"
+        android:id="@+id/productDetail"
         android:name="com.project.trackproduct.productdetails.ProductDetailsFragment"
         android:label="Product Detail"
         tools:layout="@layout/fragment_product_details" />
