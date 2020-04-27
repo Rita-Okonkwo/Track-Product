@@ -5,10 +5,14 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
+import android.util.Patterns
 import android.view.*
 import android.widget.Toast
+import androidx.core.app.ShareCompat
 import androidx.databinding.DataBindingComponent
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -53,28 +57,17 @@ class ProductDetailsFragment : Fragment() {
 
         //set on click listener for decrease button
         productDetailsBinding.decreaseBtn.setOnClickListener {
-            productDetailsViewModel.decreaseQty()
-            productDetailsBinding.qtyValue.text =
-                productDetailsViewModel.productQty.value.toString()
+           decrease_qty()
         }
 
         //set on click listener for increase button
         productDetailsBinding.increaseBtn.setOnClickListener {
-            productDetailsViewModel.increaseQty()
-            productDetailsBinding.qtyValue.text =
-                productDetailsViewModel.productQty.value.toString()
+           increase_qty()
         }
 
         //get image button on click listener
         productDetailsBinding.uploadImage.setOnClickListener {
-            val photoIntent = Intent()
-            photoIntent.type = "image/*"
-            photoIntent.action = Intent.ACTION_GET_CONTENT
-            productDetailsViewModel.createImageFile(requireContext())
-            startActivityForResult(
-                Intent.createChooser(photoIntent, "Select Picture"),
-                SELECT_IMAGE
-            )
+            upload_image()
         }
 
         //save event observer
@@ -105,6 +98,16 @@ class ProductDetailsFragment : Fragment() {
             }
         })
 
+        //order button on click listener
+        productDetailsBinding.orderProduct.setOnClickListener {
+            validate()
+            if(Patterns.EMAIL_ADDRESS.matcher(productDetailsBinding.supplierInformation.text.toString()).matches()){
+               send_email()
+            }else{
+               dial_phone()
+            }
+        }
+
 
         return productDetailsBinding.root
     }
@@ -129,6 +132,24 @@ class ProductDetailsFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.save) {
+            val name = productDetailsBinding.nameOfProduct.text.toString()
+            val price = productDetailsBinding.priceOfProduct.text.toString()
+            val supplierInfo = productDetailsBinding.supplierInformation.text.toString()
+            if(TextUtils.isEmpty(name)){
+                productDetailsBinding.nameOfProduct.error = "Enter name of product"
+                productDetailsBinding.nameOfProduct.requestFocus()
+                return false
+            }
+            if(TextUtils.isEmpty(price)){
+                productDetailsBinding.priceOfProduct.error = "Enter price of product"
+                productDetailsBinding.priceOfProduct.requestFocus()
+                return false
+            }
+            if(TextUtils.isEmpty(supplierInfo)){
+                productDetailsBinding.supplierInformation.error = "Enter supplier information"
+                productDetailsBinding.supplierInformation.requestFocus()
+                return false
+            }
             saveToProduct()
             productDetailsViewModel.saveProduct()
         }
@@ -137,6 +158,34 @@ class ProductDetailsFragment : Fragment() {
             requireView().findNavController()
         )
                 || super.onOptionsItemSelected(item)
+    }
+
+    fun send_email(){
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "message/rfc822"
+            putExtra(Intent.EXTRA_SUBJECT, productDetailsBinding.nameOfProduct.text.toString())
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(productDetailsBinding.supplierInformation.text.toString()))
+        }
+        startActivity(intent)
+    }
+
+    fun dial_phone(){
+        val uri = Uri.parse("tel:" + productDetailsBinding.supplierInformation.text.toString())
+        val intent1 = Intent(Intent.ACTION_DIAL)
+        intent1.data = uri
+        startActivity(intent1)
+    }
+
+    fun increase_qty(){
+        productDetailsViewModel.increaseQty()
+        productDetailsBinding.qtyValue.text =
+            productDetailsViewModel.productQty.value.toString()
+    }
+
+    fun decrease_qty(){
+        productDetailsViewModel.decreaseQty()
+        productDetailsBinding.qtyValue.text =
+            productDetailsViewModel.productQty.value.toString()
     }
 
     fun saveToProduct(){
@@ -150,6 +199,38 @@ class ProductDetailsFragment : Fragment() {
             productDetailsBinding.supplierInformation.text.toString()
         productDetailsViewModel.productImage.value =
             productDetailsViewModel.currentPhotoPath.value
+    }
+
+    fun upload_image(){
+        val photoIntent = Intent()
+        photoIntent.type = "image/*"
+        photoIntent.action = Intent.ACTION_GET_CONTENT
+        productDetailsViewModel.createImageFile(requireContext())
+        startActivityForResult(
+            Intent.createChooser(photoIntent, "Select Picture"),
+            SELECT_IMAGE
+        )
+    }
+
+    fun validate(){
+        val name = productDetailsBinding.nameOfProduct.text.toString()
+        val price = productDetailsBinding.priceOfProduct.text.toString()
+        val supplierInfo = productDetailsBinding.supplierInformation.text.toString()
+        if(TextUtils.isEmpty(name)){
+            productDetailsBinding.nameOfProduct.error = "Enter name of product"
+            productDetailsBinding.nameOfProduct.requestFocus()
+            return
+        }
+        if(TextUtils.isEmpty(price)){
+            productDetailsBinding.priceOfProduct.error = "Enter price of product"
+            productDetailsBinding.priceOfProduct.requestFocus()
+            return
+        }
+        if(TextUtils.isEmpty(supplierInfo)){
+            productDetailsBinding.supplierInformation.error = "Enter supplier information"
+            productDetailsBinding.supplierInformation.requestFocus()
+            return
+        }
     }
 
 
