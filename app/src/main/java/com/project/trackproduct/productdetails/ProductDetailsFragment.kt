@@ -4,6 +4,7 @@ package com.project.trackproduct.productdetails
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -39,12 +40,14 @@ class ProductDetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         setHasOptionsMenu(true)
+        //if argument from list is clicked
+        val args = ProductDetailsFragmentArgs.fromBundle(requireArguments())
         // Inflate the layout for this fragment
         productDetailsBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_product_details, container, false)
         val application = requireNotNull(this.activity).application
         val datasource = ProductDatabase.getInstance(application).productDao
-        val viewModelFactory = ProductDetailsViewModelFactory(datasource)
+        val viewModelFactory = ProductDetailsViewModelFactory(args.productId, datasource)
         productDetailsViewModel =
             ViewModelProviders.of(this, viewModelFactory).get(ProductDetailsViewModel::class.java)
 
@@ -61,7 +64,6 @@ class ProductDetailsFragment : Fragment() {
             productDetailsBinding.qtyValue.text =
                 productDetailsViewModel.productQty.value.toString()
         }
-
 
         //get image button on click listener
         productDetailsBinding.uploadImage.setOnClickListener {
@@ -88,6 +90,21 @@ class ProductDetailsFragment : Fragment() {
             productDetailsBinding.productImage.setImageBitmap(myBitmap)
         })
 
+        //get products
+        productDetailsViewModel.getProduct()
+
+        //observe the product live data
+        productDetailsViewModel.product.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                productDetailsBinding.nameOfProduct.setText(it.productName)
+                productDetailsBinding.priceOfProduct.setText(it.productPrice.toString())
+                productDetailsBinding.qtyValue.text = it.productQuantity.toString()
+                productDetailsBinding.supplierInformation.setText(it.supplierInformation)
+                val myBitmap = BitmapFactory.decodeFile(it.productImage)
+                productDetailsBinding.productImage.setImageBitmap(myBitmap)
+            }
+        })
+
 
         return productDetailsBinding.root
     }
@@ -112,18 +129,7 @@ class ProductDetailsFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.save) {
-
-            productDetailsViewModel.productName.value =
-                productDetailsBinding.nameOfProduct.text.toString()
-            productDetailsViewModel.productQty.value =
-                productDetailsBinding.qtyValue.text.toString().toInt()
-            Log.i("test", productDetailsBinding.priceOfProduct.text.toString())
-            productDetailsViewModel.productPrice.value =
-                productDetailsBinding.priceOfProduct.text.toString()
-            productDetailsViewModel.productSupplier.value =
-                productDetailsBinding.supplierInformation.text.toString()
-            productDetailsViewModel.productImage.value =
-                productDetailsViewModel.currentPhotoPath.value
+            saveToProduct()
             productDetailsViewModel.saveProduct()
         }
         return NavigationUI.onNavDestinationSelected(
@@ -131,6 +137,19 @@ class ProductDetailsFragment : Fragment() {
             requireView().findNavController()
         )
                 || super.onOptionsItemSelected(item)
+    }
+
+    fun saveToProduct(){
+        productDetailsViewModel.productName.value =
+            productDetailsBinding.nameOfProduct.text.toString()
+        productDetailsViewModel.productQty.value =
+            productDetailsBinding.qtyValue.text.toString().toInt()
+        productDetailsViewModel.productPrice.value =
+            productDetailsBinding.priceOfProduct.text.toString()
+        productDetailsViewModel.productSupplier.value =
+            productDetailsBinding.supplierInformation.text.toString()
+        productDetailsViewModel.productImage.value =
+            productDetailsViewModel.currentPhotoPath.value
     }
 
 

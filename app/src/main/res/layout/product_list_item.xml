@@ -4,7 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <variable
+            name="clickListener" type="com.project.trackproduct.productlist.ProductListAdapter.ProductListener"/>
+        <variable
+            name="product"
+            type="com.project.trackproduct.database.ProductEntity" />
     </data>
 
     <FrameLayout
@@ -12,7 +16,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:background="@android:color/white"
+        android:onClick="@{() -> clickListener.onClick(product)}"
+        android:background="@color/colorPrimary"
         android:orientation="vertical">
 
         <androidx.cardview.widget.CardView
@@ -20,7 +25,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardBackgroundColor="@android:color/white"
-            app:cardCornerRadius="15dp"
+            app:cardCornerRadius="16dp"
+            app:cardUseCompatPadding="true"
             app:cardElevation="4dp"
             app:contentPadding="16dp">
 
@@ -60,7 +66,7 @@
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="@+id/product_name"
-                    app:layout_constraintTop_toTopOf="@+id/textView5" />
+                    app:layout_constraintTop_toTopOf="@+id/price_txt" />
 
                 <TextView
                     android:id="@+id/product_qty"
@@ -89,7 +95,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/textView5"
+                    android:id="@+id/price_txt"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -111,10 +117,10 @@
                     android:text="@string/placeholder"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="18sp"
-                    app:layout_constraintEnd_toEndOf="@+id/textView5"
+                    app:layout_constraintEnd_toEndOf="@+id/price_txt"
                     app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toStartOf="@+id/textView5"
-                    app:layout_constraintTop_toBottomOf="@+id/textView5" />
+                    app:layout_constraintStart_toStartOf="@+id/price_txt"
+                    app:layout_constraintTop_toBottomOf="@+id/price_txt" />
 
                 <Button
                     android:id="@+id/sale_btn"

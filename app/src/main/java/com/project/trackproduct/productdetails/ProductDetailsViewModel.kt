@@ -16,7 +16,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 
-class ProductDetailsViewModel(val database: ProductDao) : ViewModel() {
+class ProductDetailsViewModel(val productKey: Long, val database: ProductDao) : ViewModel() {
     var currentPhotoPath = MutableLiveData<String>()
     var myBitmap = MutableLiveData<Bitmap>()
     var productName = MutableLiveData<String>()
@@ -24,6 +24,7 @@ class ProductDetailsViewModel(val database: ProductDao) : ViewModel() {
     var productQty = MutableLiveData<Int>()
     var productSupplier = MutableLiveData<String>()
     var productImage = MutableLiveData<String>()
+    var product = MutableLiveData<ProductEntity?>()
     private val _saveEvent = MutableLiveData<Boolean>()
     val saveEvent: LiveData<Boolean>
         get() = _saveEvent
@@ -35,6 +36,7 @@ class ProductDetailsViewModel(val database: ProductDao) : ViewModel() {
         productSupplier.value = ""
         productImage.value = ""
         _saveEvent.value = false
+        product.value = null
     }
 
     private var viewModelJob = Job()
@@ -76,6 +78,11 @@ class ProductDetailsViewModel(val database: ProductDao) : ViewModel() {
         _saveEvent.value = false
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        viewModelJob.cancel()
+    }
+
     @Throws(IOException::class)
     fun createImageFile(context: Context): File {
         // Create an image file name
@@ -87,6 +94,18 @@ class ProductDetailsViewModel(val database: ProductDao) : ViewModel() {
         ).apply {
             // Save a file: path for use with ACTION_VIEW intents
             currentPhotoPath.value = absolutePath
+        }
+    }
+
+    fun getProduct(){
+        uiCoroutineScope.launch {
+            product.value = get()
+        }
+    }
+
+    private suspend fun get() : ProductEntity? {
+        return withContext(Dispatchers.IO) {
+            database.get(productKey)
         }
     }
 
