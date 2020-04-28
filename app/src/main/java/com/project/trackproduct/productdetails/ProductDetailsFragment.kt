@@ -1,33 +1,27 @@
 package com.project.trackproduct.productdetails
 
 
-import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.util.Patterns
 import android.view.*
 import android.widget.Toast
-import androidx.core.app.ShareCompat
-import androidx.databinding.DataBindingComponent
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.Navigation
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 
 import com.project.trackproduct.R
 import com.project.trackproduct.database.ProductDatabase
 import com.project.trackproduct.databinding.FragmentProductDetailsBinding
-import java.io.File
 import java.io.FileOutputStream
-import java.util.jar.Manifest
 
 /**
  * @author Rita Okonkwo
@@ -38,6 +32,7 @@ class ProductDetailsFragment : Fragment() {
 
     lateinit var productDetailsViewModel: ProductDetailsViewModel
     lateinit var productDetailsBinding: FragmentProductDetailsBinding
+    lateinit var args: ProductDetailsFragmentArgs
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,7 +40,7 @@ class ProductDetailsFragment : Fragment() {
     ): View? {
         setHasOptionsMenu(true)
         //if argument from list is clicked
-        val args = ProductDetailsFragmentArgs.fromBundle(requireArguments())
+        args = ProductDetailsFragmentArgs.fromBundle(requireArguments())
         // Inflate the layout for this fragment
         productDetailsBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_product_details, container, false)
@@ -57,24 +52,37 @@ class ProductDetailsFragment : Fragment() {
 
         //set on click listener for decrease button
         productDetailsBinding.decreaseBtn.setOnClickListener {
-           decrease_qty()
+           decreaseQty()
         }
 
         //set on click listener for increase button
         productDetailsBinding.increaseBtn.setOnClickListener {
-           increase_qty()
+           increaseQty()
         }
 
         //get image button on click listener
         productDetailsBinding.uploadImage.setOnClickListener {
-            upload_image()
+            uploadImage()
         }
 
         //save event observer
         productDetailsViewModel.saveEvent.observe(viewLifecycleOwner, Observer { saveEvent ->
             if (saveEvent) {
                 Toast.makeText(activity, "Product saved", Toast.LENGTH_SHORT).show()
+                //navigate back to list screen
+                this.findNavController().navigate(ProductDetailsFragmentDirections.actionProductDetailToProductListFragment())
                 productDetailsViewModel.doneSaving()
+            }
+        })
+
+        //update event observer
+        productDetailsViewModel.updateEvent.observe(viewLifecycleOwner, Observer {
+            updateEvent ->
+            if(updateEvent){
+                Toast.makeText(activity, "Product updated", Toast.LENGTH_SHORT).show()
+                //navigate back to list screen
+                this.findNavController().navigate(ProductDetailsFragmentDirections.actionProductDetailToProductListFragment())
+                productDetailsViewModel.doneUpdating()
             }
         })
 
@@ -92,7 +100,9 @@ class ProductDetailsFragment : Fragment() {
                 productDetailsBinding.nameOfProduct.setText(it.productName)
                 productDetailsBinding.priceOfProduct.setText(it.productPrice.toString())
                 productDetailsBinding.qtyValue.text = it.productQuantity.toString()
+                productDetailsViewModel.productQty.value = it.productQuantity
                 productDetailsBinding.supplierInformation.setText(it.supplierInformation)
+                productDetailsViewModel.currentPhotoPath.value = it.productImage
                 val myBitmap = BitmapFactory.decodeFile(it.productImage)
                 productDetailsBinding.productImage.setImageBitmap(myBitmap)
             }
@@ -102,9 +112,9 @@ class ProductDetailsFragment : Fragment() {
         productDetailsBinding.orderProduct.setOnClickListener {
             validate()
             if(Patterns.EMAIL_ADDRESS.matcher(productDetailsBinding.supplierInformation.text.toString()).matches()){
-               send_email()
+               sendEmail()
             }else{
-               dial_phone()
+               dialPhone()
             }
         }
 
@@ -150,8 +160,13 @@ class ProductDetailsFragment : Fragment() {
                 productDetailsBinding.supplierInformation.requestFocus()
                 return false
             }
-            saveToProduct()
-            productDetailsViewModel.saveProduct()
+            if(args.productId == 0L) {
+                saveToProduct()
+                productDetailsViewModel.saveProduct()
+            }else{
+                saveToProduct()
+                productDetailsViewModel.updateProduct()
+            }
         }
         return NavigationUI.onNavDestinationSelected(
             item,
@@ -160,7 +175,7 @@ class ProductDetailsFragment : Fragment() {
                 || super.onOptionsItemSelected(item)
     }
 
-    fun send_email(){
+    fun sendEmail(){
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "message/rfc822"
             putExtra(Intent.EXTRA_SUBJECT, productDetailsBinding.nameOfProduct.text.toString())
@@ -169,20 +184,20 @@ class ProductDetailsFragment : Fragment() {
         startActivity(intent)
     }
 
-    fun dial_phone(){
+    fun dialPhone(){
         val uri = Uri.parse("tel:" + productDetailsBinding.supplierInformation.text.toString())
         val intent1 = Intent(Intent.ACTION_DIAL)
         intent1.data = uri
         startActivity(intent1)
     }
 
-    fun increase_qty(){
+    fun increaseQty(){
         productDetailsViewModel.increaseQty()
         productDetailsBinding.qtyValue.text =
             productDetailsViewModel.productQty.value.toString()
     }
 
-    fun decrease_qty(){
+    fun decreaseQty(){
         productDetailsViewModel.decreaseQty()
         productDetailsBinding.qtyValue.text =
             productDetailsViewModel.productQty.value.toString()
@@ -201,7 +216,7 @@ class ProductDetailsFragment : Fragment() {
             productDetailsViewModel.currentPhotoPath.value
     }
 
-    fun upload_image(){
+    fun uploadImage(){
         val photoIntent = Intent()
         photoIntent.type = "image/*"
         photoIntent.action = Intent.ACTION_GET_CONTENT

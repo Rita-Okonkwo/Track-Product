@@ -26,5 +26,9 @@
         <argument
             android:name="productId"
             app:argType="long" />
+        <action
+            android:id="@+id/action_productDetail_to_productListFragment"
+            app:destination="@id/productListFragment"
+            app:popUpTo="@+id/productListFragment" />
     </fragment>
 </navigation>

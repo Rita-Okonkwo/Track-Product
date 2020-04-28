@@ -28,6 +28,9 @@ class ProductDetailsViewModel(val productKey: Long, val database: ProductDao) : 
     private val _saveEvent = MutableLiveData<Boolean>()
     val saveEvent: LiveData<Boolean>
         get() = _saveEvent
+    private val _updateEvent = MutableLiveData<Boolean>()
+    val updateEvent: LiveData<Boolean>
+        get() = _updateEvent
 
     init {
         productName.value = ""
@@ -41,7 +44,6 @@ class ProductDetailsViewModel(val productKey: Long, val database: ProductDao) : 
 
     private var viewModelJob = Job()
     private var uiCoroutineScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-    val products = database.getAllProducts()
 
     fun decreaseQty() {
         val newValue = productQty.value
@@ -78,6 +80,10 @@ class ProductDetailsViewModel(val productKey: Long, val database: ProductDao) : 
         _saveEvent.value = false
     }
 
+    fun doneUpdating(){
+        _updateEvent.value = false
+    }
+
     override fun onCleared() {
         super.onCleared()
         viewModelJob.cancel()
@@ -106,6 +112,25 @@ class ProductDetailsViewModel(val productKey: Long, val database: ProductDao) : 
     private suspend fun get() : ProductEntity? {
         return withContext(Dispatchers.IO) {
             database.get(productKey)
+        }
+    }
+
+    fun updateProduct(){
+        val product = product.value!!
+        product.productName = productName.value!!
+        product.productPrice = productPrice.value!!.toInt()
+        product.productQuantity = productQty.value!!
+        product.supplierInformation = productSupplier.value!!
+        product.productImage = productImage.value!!
+        uiCoroutineScope.launch {
+            update(product)
+            _updateEvent.value = true
+        }
+    }
+
+    private suspend fun update(product: ProductEntity){
+        withContext(Dispatchers.IO){
+            database.update(product)
         }
     }
 
