@@ -31,6 +31,9 @@ class ProductDetailsViewModel(val productKey: Long, val database: ProductDao) : 
     private val _updateEvent = MutableLiveData<Boolean>()
     val updateEvent: LiveData<Boolean>
         get() = _updateEvent
+    private val _deleteEvent = MutableLiveData<Boolean>()
+    val deleteEvent: LiveData<Boolean>
+        get() = _deleteEvent
 
     init {
         productName.value = ""
@@ -80,8 +83,12 @@ class ProductDetailsViewModel(val productKey: Long, val database: ProductDao) : 
         _saveEvent.value = false
     }
 
-    fun doneUpdating(){
+    fun doneUpdating() {
         _updateEvent.value = false
+    }
+
+    fun doneDeleting() {
+        _deleteEvent.value = false
     }
 
     override fun onCleared() {
@@ -103,19 +110,19 @@ class ProductDetailsViewModel(val productKey: Long, val database: ProductDao) : 
         }
     }
 
-    fun getProduct(){
+    fun getProduct() {
         uiCoroutineScope.launch {
             product.value = get()
         }
     }
 
-    private suspend fun get() : ProductEntity? {
+    private suspend fun get(): ProductEntity? {
         return withContext(Dispatchers.IO) {
             database.get(productKey)
         }
     }
 
-    fun updateProduct(){
+    fun updateProduct() {
         val product = product.value!!
         product.productName = productName.value!!
         product.productPrice = productPrice.value!!.toInt()
@@ -128,9 +135,22 @@ class ProductDetailsViewModel(val productKey: Long, val database: ProductDao) : 
         }
     }
 
-    private suspend fun update(product: ProductEntity){
-        withContext(Dispatchers.IO){
+    private suspend fun update(product: ProductEntity) {
+        withContext(Dispatchers.IO) {
             database.update(product)
+        }
+    }
+
+    fun deleteProduct() {
+        uiCoroutineScope.launch {
+            delete(product.value!!)
+            _deleteEvent.value = true
+        }
+    }
+
+    private suspend fun delete(product: ProductEntity) {
+        withContext(Dispatchers.IO) {
+            database.delete(product)
         }
     }
 

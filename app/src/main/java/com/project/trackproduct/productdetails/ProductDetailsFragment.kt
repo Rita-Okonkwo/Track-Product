@@ -1,6 +1,8 @@
 package com.project.trackproduct.productdetails
 
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -52,12 +54,12 @@ class ProductDetailsFragment : Fragment() {
 
         //set on click listener for decrease button
         productDetailsBinding.decreaseBtn.setOnClickListener {
-           decreaseQty()
+            decreaseQty()
         }
 
         //set on click listener for increase button
         productDetailsBinding.increaseBtn.setOnClickListener {
-           increaseQty()
+            increaseQty()
         }
 
         //get image button on click listener
@@ -70,18 +72,30 @@ class ProductDetailsFragment : Fragment() {
             if (saveEvent) {
                 Toast.makeText(activity, "Product saved", Toast.LENGTH_SHORT).show()
                 //navigate back to list screen
-                this.findNavController().navigate(ProductDetailsFragmentDirections.actionProductDetailToProductListFragment())
+                this.findNavController()
+                    .navigate(ProductDetailsFragmentDirections.actionProductDetailToProductListFragment())
                 productDetailsViewModel.doneSaving()
             }
         })
 
+        //delete event observer
+        productDetailsViewModel.deleteEvent.observe(viewLifecycleOwner, Observer { deleteEvent ->
+            if (deleteEvent) {
+                Toast.makeText(activity, "Product Deleted", Toast.LENGTH_SHORT).show()
+                //navigate back to list screen
+                this.findNavController()
+                    .navigate(ProductDetailsFragmentDirections.actionProductDetailToProductListFragment())
+                productDetailsViewModel.doneDeleting()
+            }
+        })
+
         //update event observer
-        productDetailsViewModel.updateEvent.observe(viewLifecycleOwner, Observer {
-            updateEvent ->
-            if(updateEvent){
+        productDetailsViewModel.updateEvent.observe(viewLifecycleOwner, Observer { updateEvent ->
+            if (updateEvent) {
                 Toast.makeText(activity, "Product updated", Toast.LENGTH_SHORT).show()
                 //navigate back to list screen
-                this.findNavController().navigate(ProductDetailsFragmentDirections.actionProductDetailToProductListFragment())
+                this.findNavController()
+                    .navigate(ProductDetailsFragmentDirections.actionProductDetailToProductListFragment())
                 productDetailsViewModel.doneUpdating()
             }
         })
@@ -111,10 +125,10 @@ class ProductDetailsFragment : Fragment() {
         //order button on click listener
         productDetailsBinding.orderProduct.setOnClickListener {
             validate()
-            if(Patterns.EMAIL_ADDRESS.matcher(productDetailsBinding.supplierInformation.text.toString()).matches()){
-               sendEmail()
-            }else{
-               dialPhone()
+            if (Patterns.EMAIL_ADDRESS.matcher(productDetailsBinding.supplierInformation.text.toString()).matches()) {
+                sendEmail()
+            } else {
+                dialPhone()
             }
         }
 
@@ -145,27 +159,32 @@ class ProductDetailsFragment : Fragment() {
             val name = productDetailsBinding.nameOfProduct.text.toString()
             val price = productDetailsBinding.priceOfProduct.text.toString()
             val supplierInfo = productDetailsBinding.supplierInformation.text.toString()
-            if(TextUtils.isEmpty(name)){
+            if (TextUtils.isEmpty(name)) {
                 productDetailsBinding.nameOfProduct.error = "Enter name of product"
                 productDetailsBinding.nameOfProduct.requestFocus()
                 return false
             }
-            if(TextUtils.isEmpty(price)){
+            if (TextUtils.isEmpty(price)) {
                 productDetailsBinding.priceOfProduct.error = "Enter price of product"
                 productDetailsBinding.priceOfProduct.requestFocus()
                 return false
             }
-            if(TextUtils.isEmpty(supplierInfo)){
+            if (TextUtils.isEmpty(supplierInfo)) {
                 productDetailsBinding.supplierInformation.error = "Enter supplier information"
                 productDetailsBinding.supplierInformation.requestFocus()
                 return false
             }
-            if(args.productId == 0L) {
+            if (args.productId == 0L) {
                 saveToProduct()
                 productDetailsViewModel.saveProduct()
-            }else{
+            } else {
                 saveToProduct()
                 productDetailsViewModel.updateProduct()
+            }
+        }
+        if (item.itemId == R.id.delete) {
+            if (args.productId != 0L) {
+                buildDialog()
             }
         }
         return NavigationUI.onNavDestinationSelected(
@@ -175,35 +194,38 @@ class ProductDetailsFragment : Fragment() {
                 || super.onOptionsItemSelected(item)
     }
 
-    fun sendEmail(){
+    fun sendEmail() {
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "message/rfc822"
             putExtra(Intent.EXTRA_SUBJECT, productDetailsBinding.nameOfProduct.text.toString())
-            putExtra(Intent.EXTRA_EMAIL, arrayOf(productDetailsBinding.supplierInformation.text.toString()))
+            putExtra(
+                Intent.EXTRA_EMAIL,
+                arrayOf(productDetailsBinding.supplierInformation.text.toString())
+            )
         }
         startActivity(intent)
     }
 
-    fun dialPhone(){
+    fun dialPhone() {
         val uri = Uri.parse("tel:" + productDetailsBinding.supplierInformation.text.toString())
         val intent1 = Intent(Intent.ACTION_DIAL)
         intent1.data = uri
         startActivity(intent1)
     }
 
-    fun increaseQty(){
+    fun increaseQty() {
         productDetailsViewModel.increaseQty()
         productDetailsBinding.qtyValue.text =
             productDetailsViewModel.productQty.value.toString()
     }
 
-    fun decreaseQty(){
+    fun decreaseQty() {
         productDetailsViewModel.decreaseQty()
         productDetailsBinding.qtyValue.text =
             productDetailsViewModel.productQty.value.toString()
     }
 
-    fun saveToProduct(){
+    fun saveToProduct() {
         productDetailsViewModel.productName.value =
             productDetailsBinding.nameOfProduct.text.toString()
         productDetailsViewModel.productQty.value =
@@ -216,7 +238,7 @@ class ProductDetailsFragment : Fragment() {
             productDetailsViewModel.currentPhotoPath.value
     }
 
-    fun uploadImage(){
+    fun uploadImage() {
         val photoIntent = Intent()
         photoIntent.type = "image/*"
         photoIntent.action = Intent.ACTION_GET_CONTENT
@@ -227,25 +249,38 @@ class ProductDetailsFragment : Fragment() {
         )
     }
 
-    fun validate(){
+    fun validate() {
         val name = productDetailsBinding.nameOfProduct.text.toString()
         val price = productDetailsBinding.priceOfProduct.text.toString()
         val supplierInfo = productDetailsBinding.supplierInformation.text.toString()
-        if(TextUtils.isEmpty(name)){
+        if (TextUtils.isEmpty(name)) {
             productDetailsBinding.nameOfProduct.error = "Enter name of product"
             productDetailsBinding.nameOfProduct.requestFocus()
             return
         }
-        if(TextUtils.isEmpty(price)){
+        if (TextUtils.isEmpty(price)) {
             productDetailsBinding.priceOfProduct.error = "Enter price of product"
             productDetailsBinding.priceOfProduct.requestFocus()
             return
         }
-        if(TextUtils.isEmpty(supplierInfo)){
+        if (TextUtils.isEmpty(supplierInfo)) {
             productDetailsBinding.supplierInformation.error = "Enter supplier information"
             productDetailsBinding.supplierInformation.requestFocus()
             return
         }
+    }
+
+    fun buildDialog() {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Delete Product")
+        builder.setMessage("Are you sure?")
+        builder.setNegativeButton("Cancel") { dialogInterface, i ->
+            dialogInterface.dismiss()
+        }
+        builder.setPositiveButton("Delete") { dialogInterface, i ->
+            productDetailsViewModel.deleteProduct()
+        }
+        builder.show()
     }
 
 

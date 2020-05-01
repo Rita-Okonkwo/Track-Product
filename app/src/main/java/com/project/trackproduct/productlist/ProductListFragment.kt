@@ -44,17 +44,23 @@ class ProductListFragment : Fragment() {
         //initialize view model factory
         val viewModelFactory = ProductListViewModelFactory(datasource)
         //initialize viewmodel
-        productListViewModel = ViewModelProviders.of(this, viewModelFactory).get(ProductListViewModel::class.java)
+        productListViewModel =
+            ViewModelProviders.of(this, viewModelFactory).get(ProductListViewModel::class.java)
 
         //FAB button for adding new product
         productListBinding.addProduct.setOnClickListener {
             view?.findNavController()
                 ?.navigate(ProductListFragmentDirections.actionProductListFragmentToProductDetailFragment())
         }
-        val productListAdapter = ProductListAdapter(ProductListAdapter.ProductListener{
-            productId ->
-            view?.findNavController()?.navigate(ProductListFragmentDirections.actionProductListFragmentToProductDetailFragment(productId))
-        })
+        val productListAdapter =
+            ProductListAdapter(ProductListAdapter.ProductListener { productId ->
+                view?.findNavController()?.navigate(
+                    ProductListFragmentDirections.actionProductListFragmentToProductDetailFragment(
+                        productId
+                    )
+                )
+
+            })
         productListBinding.productRecycler.adapter = productListAdapter
         productListBinding.productRecycler.layoutManager = LinearLayoutManager(activity)
 

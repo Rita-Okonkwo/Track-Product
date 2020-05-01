@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 
 @Dao
-interface ProductDao{
+interface ProductDao {
     @Insert
     fun insert(product: ProductEntity)
 

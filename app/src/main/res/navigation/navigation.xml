@@ -13,16 +13,17 @@
         <action
             android:id="@+id/action_productListFragment_to_productDetailFragment"
             app:destination="@id/productDetail"
-            app:popUpTo="@+id/productListFragment" >
-            <argument android:defaultValue="0L"
-                android:name="productId" />
+            app:popUpTo="@+id/productListFragment">
+            <argument
+                android:name="productId"
+                android:defaultValue="0L" />
         </action>
     </fragment>
     <fragment
         android:id="@+id/productDetail"
         android:name="com.project.trackproduct.productdetails.ProductDetailsFragment"
         android:label="Product Detail"
-        tools:layout="@layout/fragment_product_details" >
+        tools:layout="@layout/fragment_product_details">
         <argument
             android:name="productId"
             app:argType="long" />

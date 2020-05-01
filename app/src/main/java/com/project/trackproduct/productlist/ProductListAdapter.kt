@@ -10,7 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.project.trackproduct.database.ProductEntity
 import com.project.trackproduct.databinding.ProductListItemBinding
 
-class ProductListAdapter(val clickListener: ProductListener) : ListAdapter<ProductEntity, ProductListAdapter.ViewHolder>(ProductListDiffCallback()){
+class ProductListAdapter(val clickListener: ProductListener) :
+    ListAdapter<ProductEntity, ProductListAdapter.ViewHolder>(ProductListDiffCallback()) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -23,11 +24,18 @@ class ProductListAdapter(val clickListener: ProductListener) : ListAdapter<Produ
         holder.bind(clickListener, item)
     }
 
-    class ViewHolder private constructor(val binding: ProductListItemBinding) : RecyclerView.ViewHolder(binding.root){
-        fun bind(clickListener: ProductListener, item : ProductEntity){
+    class ViewHolder private constructor(val binding: ProductListItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(clickListener: ProductListener, item: ProductEntity) {
             binding.nameText.text = item.productName
             binding.priceTxt.text = item.productPrice.toString()
             binding.qtyText.text = item.productQuantity.toString()
+            binding.saleBtn.setOnClickListener {
+                if (item.productQuantity != 0) {
+                    item.productQuantity -= 1
+                    binding.qtyText.text = item.productQuantity.toString()
+                }
+            }
             val myBitmap = BitmapFactory.decodeFile(item.productImage)
             binding.productImage.setImageBitmap(myBitmap)
             binding.clickListener = clickListener

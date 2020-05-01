@@ -4,8 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
-            name="clickListener" type="com.project.trackproduct.productlist.ProductListAdapter.ProductListener"/>
+            name="clickListener"
+            type="com.project.trackproduct.productlist.ProductListAdapter.ProductListener" />
+
         <variable
             name="product"
             type="com.project.trackproduct.database.ProductEntity" />
@@ -16,8 +19,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:onClick="@{() -> clickListener.onClick(product)}"
         android:background="@color/colorPrimary"
+        android:onClick="@{() -> clickListener.onClick(product)}"
         android:orientation="vertical">
 
         <androidx.cardview.widget.CardView
@@ -26,8 +29,8 @@
             android:layout_height="wrap_content"
             app:cardBackgroundColor="@android:color/white"
             app:cardCornerRadius="16dp"
-            app:cardUseCompatPadding="true"
             app:cardElevation="4dp"
+            app:cardUseCompatPadding="true"
             app:contentPadding="16dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout

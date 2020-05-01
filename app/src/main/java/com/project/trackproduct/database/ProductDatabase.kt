@@ -6,13 +6,14 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(entities = [ProductEntity::class], version = 1, exportSchema = false)
-abstract class ProductDatabase : RoomDatabase(){
+abstract class ProductDatabase : RoomDatabase() {
     abstract val productDao: ProductDao
 
-    companion object{
+    companion object {
         @Volatile
         private var INSTANCE: ProductDatabase? = null
-        fun getInstance(context: Context): ProductDatabase{
+
+        fun getInstance(context: Context): ProductDatabase {
             synchronized(this) {
                 var instance = INSTANCE
                 if (instance == null) {
