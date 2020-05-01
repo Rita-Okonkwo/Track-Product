@@ -21,7 +21,7 @@ This image shows the alert dialog when the delete menu is clicked:
 
 This image shows the phone dial screen when the order product button is clicked:
 
-![Phone Dial screen](ithub.com/Rita-Okonkwo/Track-Product/blob/master/screenshots/Screenshot_1588342111.png)
+![Phone Dial screen](https://github.com/Rita-Okonkwo/Track-Product/blob/master/screenshots/Screenshot_1588342111.png)
 
 ## Things I learnt while working on this project:
 * How to make use of Kotlin Coroutines for background threads
