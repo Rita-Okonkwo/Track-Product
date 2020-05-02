@@ -45,7 +45,7 @@
                 android:ems="10"
                 android:fontFamily="@font/poppins"
                 android:hint="@string/name_of_product"
-                android:inputType="textPersonName"
+                android:inputType="text"
                 android:textColor="@color/colorPrimaryDark"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -60,6 +60,7 @@
                 android:fontFamily="@font/poppins"
                 android:hint="@string/price_of_product"
                 android:inputType="number"
+                android:maxLength="12"
                 android:textColor="@color/colorPrimaryDark"
                 app:layout_constraintEnd_toEndOf="@+id/name_of_product"
                 app:layout_constraintStart_toStartOf="@+id/name_of_product"
@@ -90,17 +91,19 @@
                 app:layout_constraintStart_toEndOf="@+id/qty_text"
                 app:layout_constraintTop_toBottomOf="@+id/price_of_product" />
 
-            <TextView
+            <EditText
                 android:id="@+id/qty_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
                 android:fontFamily="@font/poppins"
                 android:text="@string/default_qty"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="18sp"
+                app:layout_constraintBottom_toTopOf="@+id/supplier_information"
                 app:layout_constraintEnd_toStartOf="@+id/decrease_btn"
                 app:layout_constraintStart_toEndOf="@+id/increase_btn"
                 app:layout_constraintTop_toBottomOf="@+id/price_of_product" />
@@ -111,10 +114,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
                 android:background="@color/colorPrimaryDark"
                 android:fontFamily="@font/poppins"
                 android:text="@string/sub"
                 android:textColor="@color/colorAccent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/qty_value"
                 app:layout_constraintTop_toBottomOf="@+id/price_of_product" />
 

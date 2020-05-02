@@ -14,6 +14,7 @@
     <string name="price_of_product">Enter price of product (value only)</string>
     <string name="plus">+</string>
     <string name="default_qty">0</string>
+    <string name="add_product_txt">Please click on the add button\n at the bottom to add a product</string>
     <string name="sub">-</string>
     <string name="supplier">Enter email or phone number of supplier</string>
     <string name="order">order product</string>

@@ -113,7 +113,7 @@ class ProductDetailsFragment : Fragment() {
             it?.let {
                 productDetailsBinding.nameOfProduct.setText(it.productName)
                 productDetailsBinding.priceOfProduct.setText(it.productPrice.toString())
-                productDetailsBinding.qtyValue.text = it.productQuantity.toString()
+                productDetailsBinding.qtyValue.setText(it.productQuantity.toString())
                 productDetailsViewModel.productQty.value = it.productQuantity
                 productDetailsBinding.supplierInformation.setText(it.supplierInformation)
                 productDetailsViewModel.currentPhotoPath.value = it.productImage
@@ -137,15 +137,16 @@ class ProductDetailsFragment : Fragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == SELECT_IMAGE) {
-            productDetailsViewModel.setPic(requireContext(), data?.data)
-            val outputStream = FileOutputStream(productDetailsViewModel.currentPhotoPath.value!!)
-            productDetailsViewModel.myBitmap.value?.compress(
-                Bitmap.CompressFormat.PNG,
-                100,
-                outputStream
-            )
-            outputStream.close()
+        if (requestCode == SELECT_IMAGE && data != null) {
+            productDetailsViewModel.setPic(requireContext(), data.data)
+                val outputStream =
+                    FileOutputStream(productDetailsViewModel.currentPhotoPath.value!!)
+                productDetailsViewModel.myBitmap.value?.compress(
+                    Bitmap.CompressFormat.PNG,
+                    100,
+                    outputStream
+                )
+                outputStream.close()
         }
     }
 
@@ -169,9 +170,17 @@ class ProductDetailsFragment : Fragment() {
                 productDetailsBinding.priceOfProduct.requestFocus()
                 return false
             }
-            if (TextUtils.isEmpty(supplierInfo)) {
+            if (TextUtils.isEmpty(supplierInfo) || ((!Patterns.EMAIL_ADDRESS.matcher(productDetailsBinding.supplierInformation.text.toString()).matches()) && (!Patterns.PHONE.matcher(productDetailsBinding.supplierInformation.text.toString()).matches()))) {
                 productDetailsBinding.supplierInformation.error = "Enter supplier information"
                 productDetailsBinding.supplierInformation.requestFocus()
+                return false
+            }
+            if (productDetailsBinding.qtyValue.text.toString() == "0"){
+                Toast.makeText(context, "Please enter a quantity for product", Toast.LENGTH_SHORT).show()
+                return false
+            }
+            if(productDetailsBinding.productImage.drawable == null){
+                Toast.makeText(context, "Please upload an image", Toast.LENGTH_SHORT).show()
                 return false
             }
             if (args.productId == 0L) {
@@ -195,8 +204,7 @@ class ProductDetailsFragment : Fragment() {
     }
 
     fun sendEmail() {
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "message/rfc822"
+        val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:")).apply {
             putExtra(Intent.EXTRA_SUBJECT, productDetailsBinding.nameOfProduct.text.toString())
             putExtra(
                 Intent.EXTRA_EMAIL,
@@ -215,14 +223,12 @@ class ProductDetailsFragment : Fragment() {
 
     fun increaseQty() {
         productDetailsViewModel.increaseQty()
-        productDetailsBinding.qtyValue.text =
-            productDetailsViewModel.productQty.value.toString()
+        productDetailsBinding.qtyValue.setText(productDetailsViewModel.productQty.value.toString())
     }
 
     fun decreaseQty() {
         productDetailsViewModel.decreaseQty()
-        productDetailsBinding.qtyValue.text =
-            productDetailsViewModel.productQty.value.toString()
+        productDetailsBinding.qtyValue.setText(productDetailsViewModel.productQty.value.toString())
     }
 
     fun saveToProduct() {

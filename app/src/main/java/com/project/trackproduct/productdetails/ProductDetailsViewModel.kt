@@ -17,7 +17,7 @@ import java.io.FileNotFoundException
 import java.io.IOException
 
 class ProductDetailsViewModel(val productKey: Long, val database: ProductDao) : ViewModel() {
-    var currentPhotoPath = MutableLiveData<String>()
+    var currentPhotoPath = MutableLiveData<String?>()
     var myBitmap = MutableLiveData<Bitmap>()
     var productName = MutableLiveData<String>()
     var productPrice = MutableLiveData<String>()
@@ -63,7 +63,7 @@ class ProductDetailsViewModel(val productKey: Long, val database: ProductDao) : 
     fun saveProduct() {
         val product = ProductEntity()
         product.productName = productName.value!!
-        product.productPrice = productPrice.value!!.toInt()
+        product.productPrice = productPrice.value!!.toLong()
         product.productQuantity = productQty.value!!
         product.supplierInformation = productSupplier.value!!
         product.productImage = productImage.value!!
@@ -125,7 +125,7 @@ class ProductDetailsViewModel(val productKey: Long, val database: ProductDao) : 
     fun updateProduct() {
         val product = product.value!!
         product.productName = productName.value!!
-        product.productPrice = productPrice.value!!.toInt()
+        product.productPrice = productPrice.value!!.toLong()
         product.productQuantity = productQty.value!!
         product.supplierInformation = productSupplier.value!!
         product.productImage = productImage.value!!

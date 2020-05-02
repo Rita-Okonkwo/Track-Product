@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -52,6 +53,7 @@ class ProductListFragment : Fragment() {
             view?.findNavController()
                 ?.navigate(ProductListFragmentDirections.actionProductListFragmentToProductDetailFragment())
         }
+
         val productListAdapter =
             ProductListAdapter(ProductListAdapter.ProductListener { productId ->
                 view?.findNavController()?.navigate(
@@ -62,11 +64,14 @@ class ProductListFragment : Fragment() {
 
             })
         productListBinding.productRecycler.adapter = productListAdapter
-        productListBinding.productRecycler.layoutManager = LinearLayoutManager(activity)
+        productListBinding.productRecycler.layoutManager = LinearLayoutManager(activity) as RecyclerView.LayoutManager?
 
         productListViewModel.products.observe(viewLifecycleOwner, Observer {
             it?.let {
-                productListAdapter.submitList(it)
+                if (it.isNotEmpty()) {
+                    productListBinding.addProdTxt.visibility = View.GONE
+                    productListAdapter.submitList(it)
+                }
             }
         })
         return productListBinding.root

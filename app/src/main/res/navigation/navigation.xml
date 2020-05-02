@@ -13,7 +13,8 @@
         <action
             android:id="@+id/action_productListFragment_to_productDetailFragment"
             app:destination="@id/productDetail"
-            app:popUpTo="@+id/productListFragment">
+            app:popUpTo="@+id/productListFragment"
+            app:popUpToInclusive="true">
             <argument
                 android:name="productId"
                 android:defaultValue="0L" />

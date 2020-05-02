@@ -13,7 +13,7 @@ data class ProductEntity(
     var productName: String = "",
 
     @ColumnInfo(name = "Price")
-    var productPrice: Int = 0,
+    var productPrice: Long = 0,
 
     @ColumnInfo(name = "Quantity")
     var productQuantity: Int = 0,
